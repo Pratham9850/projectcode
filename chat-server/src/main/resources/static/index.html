@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Online Users</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+</head>
+<body>
+    <h1>Online Users</h1>
+    <ul id="userList"></ul>
+
+    <script>
+        const socket = new SockJS('/ws-chat');
+        const stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, () => {
+            stompClient.subscribe('/topic/onlineUsers', (data) => {
+                const onlineUsers = JSON.parse(data.body);
+                const userList = document.getElementById('userList');
+                userList.innerHTML = '';
+
+                onlineUsers.forEach(user => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = user;
+                    userList.appendChild(listItem);
+                });
+            });
+           
+        });
+    </script>
+</body>
+</html>
